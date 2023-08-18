@@ -15,6 +15,8 @@ jobs:
   add_label:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    outpus:
+      issue_id_list: ${{ steps.pr-commits.outputs.issue_id_list }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -59,11 +61,11 @@ jobs:
           issue-number: 1
           comment: Auto-closing issue
   close_issue:
-    needs: [ add_label ]
+    needs: add_label
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        issue_id: ${{ needs.add_label.pr-commits.outputs.issue_id_list}}
+        issue_id: ${{ needs.add_label.outputs.issue_id_list }}
     steps:
       - name: Close Issue ${{ matrix.issue_id }}
         uses: peter-evans/close-issue@v3
