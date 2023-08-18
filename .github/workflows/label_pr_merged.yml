@@ -20,7 +20,7 @@ jobs:
             const { data: commits } = await github.rest.pulls.listCommits({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              pull_number: github.event.number
+              pull_number: ${{ github.event.number }}
             });
             const messages = commits.map(commit => commit.commit.message);
             console.log(messages.join("\n"));
