@@ -17,7 +17,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Get PR commits messages
-        id: pr-commit
+        id: pr-commits
         uses: actions/github-script@v6
         with:
           script: |
@@ -61,7 +61,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        issue_id: ${{fromJson(needs.add_label.outputs.issue_id_list)}}
+        issue_id: ${{ needs.add_label.pr-commits.outputs.issue_id_list}}
     steps:
       - name: Close Issue ${{ matrix.issue_id }}
         uses: peter-evans/close-issue@v3
