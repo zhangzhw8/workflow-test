@@ -41,12 +41,20 @@ jobs:
         with:
           script: |
             for (const issue_id of ${{ steps.pr-commits.outputs.issue_id_list }}) {
-              github.rest.issues.removeLabel({
-                issue_number: issue_id,
+              const { data: labels } = await github.rest.issues.listLabelsOnIssue({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                name: ["todo"]
+                issue_number: issue_id
               });
+              const todo_label = labels.find(label => label.name === "todo");
+              if (todo_label) {
+                github.rest.issues.removeLabel({
+                  issue_number: issue_id,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name: "todo"
+                });
+              }
               github.rest.issues.addLabels({
                 issue_number: issue_id,
                 owner: context.repo.owner, 
