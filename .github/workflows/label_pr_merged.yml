@@ -13,6 +13,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: xxx
+        id: xx
+        run: |
+          git log --oneline
       - name: Get PR commits messages
         id: get_commits
         run: |
