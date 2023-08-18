@@ -70,5 +70,5 @@ jobs:
         uses: peter-evans/close-issue@v3
         with:
           issue-number: ${{ matrix.issue_id }}
-          comment: close after pr merged \#${{ github.event.number }}
+          comment: Auto close issue after pr merged \#${{ github.event.number }}
 
