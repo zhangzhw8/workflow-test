@@ -17,6 +17,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Get PR commits messages
+<<<<<<< Updated upstream
+=======
+        id: pr-commits
+>>>>>>> Stashed changes
         uses: actions/github-script@v6
         with:
           script: |
@@ -30,13 +34,12 @@ jobs:
             const regex = /#(\d+)/g;
             const issue_id_list = messages.join("\n").match(regex).map(match => match.replace("#", ""));
             console.log(issue_id_list);
-            core.setOutput("issue_id_list", JSON.stringify(issue_id_list));
+            core.setOutput("issue_id_list", issue_id_list);
       - name: Add label to issues
         uses: actions/github-script@v6
         with:
           script: |
-            const issue_id_list = JSON.parse('${{ steps.pr-commits.outputs.issue_id_list }}');
-            for (const issue_id of issue_id_list) {
+            for (const issue_id of ${{ steps.pr-commits.outputs.issue_id_list }}) {
               github.rest.issues.removeLabel({
                 issue_number: issue_id,
                 owner: context.repo.owner,
