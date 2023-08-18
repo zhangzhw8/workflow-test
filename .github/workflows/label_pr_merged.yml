@@ -8,6 +8,8 @@ on:
 
 permissions:
   pull-requests: read
+  issues: write
+
 
 jobs:
   add_label:
@@ -45,7 +47,7 @@ jobs:
                 name: ["backlog", "todo", "doing"]
               });
               github.rest.issues.addLabels({
-                issue_number: $issue_id,
+                issue_number: issue_id,
                 owner: context.repo.owner, 
                 repo: context.repo.repo,
                 labels: ["for test"]
