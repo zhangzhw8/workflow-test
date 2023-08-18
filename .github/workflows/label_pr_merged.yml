@@ -16,16 +16,17 @@ jobs:
       - name: xxx
         id: xx
         run: |
-          git log --oneline
+          COMMIT_MESSAGES=$(git log --oneline --format=%B)
+          echo $COMMIT_MESSAGES
       - name: Get PR commits messages
         id: get_commits
         run: |
-          COMMIT_MESSAGES=$(git log --format=%B ${{ github.event.pull_request.base.sha }}..${{ github.sha }})
+          COMMIT_MESSAGES=$(git log --oneline --format=%B)
           echo $COMMIT_MESSAGES
           ISSUE_IDS=$(echo $COMMIT_MESSAGES | grep -o '#[0-9]*' | cut -c 2-)
-          ISSUE_ID_LIST=$(echo "[$ISSUE_IDS]" | tr ' ' ',')
+          ISSUE_ID_LIST=$(echo "[$ISSUE_IDS]" | tr ' ' ',' | tr '\n' ',')
           echo "::set-output name=issue_ids::$ISSUE_IDS"
-          echo "::set-output name=issue_id_list::ISSUE_ID_LIST"
+          echo "::set-output name=issue_id_list::$ISSUE_ID_LIST"
       - name: Add label to issues
         uses: actions/github-script@v6
         with:
