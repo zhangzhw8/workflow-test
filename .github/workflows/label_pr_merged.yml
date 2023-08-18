@@ -15,7 +15,7 @@ jobs:
   add_label:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
-    outpus:
+    outputs:
       issue_id_list: ${{ steps.pr-commits.outputs.issue_id_list }}
     steps:
       - name: Checkout code
