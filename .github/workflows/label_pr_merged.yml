@@ -17,6 +17,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Get PR commits messages
+        id: pr-commit
         uses: actions/github-script@v6
         with:
           script: |
