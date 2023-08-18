@@ -13,20 +13,23 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: xxx
-        id: xx
-        run: |
-          COMMIT_MESSAGES=$(git log --oneline)
-          echo $COMMIT_MESSAGES
       - name: Get PR commits messages
-        id: get_commits
-        run: |
-          COMMIT_MESSAGES=$(git log --oneline ${{ github.event.pull_request.base.sha }}..${{ github.sha }})
-          echo $COMMIT_MESSAGES
-          ISSUE_IDS=$(echo $COMMIT_MESSAGES | grep -o '#[0-9]*' | cut -c 2-)
-          ISSUE_ID_LIST=[${$(echo $ISSUE_IDS | tr '\n' ',')%?}]
-          echo "::set-output name=issue_ids::$ISSUE_IDS"
-          echo "::set-output name=issue_id_list::$ISSUE_ID_LIST"
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { data: commits } = await github.pulls.listCommits({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number
+            });
+            const messages = commits.map(commit => commit.commit.message);
+            console.log(messages.join("\n"));
+            const regex = /#(\d+)/g;
+            const issueIds = messages.join("\n").match(regex).map(match => match.replace("#", ""));
+            console.log(issueIds);
+            core.setOutput("commit-messages", messages.join("\n"));
+            core.setOutput("issue-ids", issueIds.join(" "));
+            core.setOutput("issue-id-list", JSON.stringify(issueIds));
       - name: Add label to issues
         uses: actions/github-script@v6
         with:
