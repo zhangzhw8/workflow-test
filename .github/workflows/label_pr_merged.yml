@@ -28,31 +28,28 @@ jobs:
             const messages = commits.map(commit => commit.commit.message);
             console.log(messages.join("\n"));
             const regex = /#(\d+)/g;
-            const issueIds = messages.join("\n").match(regex).map(match => match.replace("#", ""));
-            console.log(issueIds);
-            core.setOutput("commit-messages", messages.join("\n"));
-            core.setOutput("issue-ids", issueIds.join(" "));
-            core.setOutput("issue-id-list", JSON.stringify(issueIds));
+            const issue_id_list = messages.join("\n").match(regex).map(match => match.replace("#", ""));
+            console.log(issue_id_list);
+            core.setOutput("issue_id_list", JSON.stringify(issue_id_list));
       - name: Add label to issues
         uses: actions/github-script@v6
         with:
           script: |
-            echo $ISSUE_IDS | tr ' ' '\n' | while read issue_id;
-            do {
-            github.rest.issues.removeLabel({
-              issue_number: $issue_id,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              name: ["backlog", "todo", "doing"]
-            });
-            github.rest.issues.addLabels({
-              issue_number: $issue_id,
-              owner: context.repo.owner, 
-              repo: context.repo.repo,
-              labels: ["for test"]
-            });
+            const issue_id_list = JSON.parse('${{ steps.pr-commits.outputs.issue_id_list }}');
+            for (const issue_id of issue_id_list) {
+              github.rest.issues.removeLabel({
+                issue_number: issue_id,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                name: ["backlog", "todo", "doing"]
+              });
+              github.rest.issues.addLabels({
+                issue_number: $issue_id,
+                owner: context.repo.owner, 
+                repo: context.repo.repo,
+                labels: ["for test"]
+              });
             }
-            done
       - name: Close Issue
         uses: peter-evans/close-issue@v3
         with:
