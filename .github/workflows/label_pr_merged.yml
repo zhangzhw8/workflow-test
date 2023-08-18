@@ -17,10 +17,10 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const { data: commits } = await github.pulls.listCommits({
+            const { data: commits } = await github.rest.pulls.listCommits({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              pull_number: context.payload.pull_request.number
+              pull_number: github.event.number
             });
             const messages = commits.map(commit => commit.commit.message);
             console.log(messages.join("\n"));
@@ -66,5 +66,5 @@ jobs:
         uses: peter-evans/close-issue@v3
         with:
           issue-number: ${{ matrix.issue_id }}
-          comment: close after pr merged \#${{ github.event.pull_request.number }}
+          comment: close after pr merged \#${{ github.event.number }}
 
