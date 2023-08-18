@@ -17,7 +17,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Get PR commits messages
+<<<<<<< Updated upstream
         id: pr-commit
+=======
+        id: pr-commits
+>>>>>>> Stashed changes
         uses: actions/github-script@v6
         with:
           script: |
