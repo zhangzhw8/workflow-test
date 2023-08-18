@@ -6,6 +6,9 @@ on:
     types:
       - closed
 
+permissions:
+  pull-requests: read
+
 jobs:
   add_label:
     if: github.event.pull_request.merged == true
