@@ -20,10 +20,13 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.WORKFLOW_ACTION_TOKEN }}
       - name: Get PR commits messages
         id: pr-commits
         uses: actions/github-script@v6
         with:
+          github-token: ${{ secrets.WORKFLOW_ACTION_TOKEN }}
           script: |
             const { data: commits } = await github.rest.pulls.listCommits({
               owner: context.repo.owner,
@@ -39,6 +42,7 @@ jobs:
       - name: Add label to issues
         uses: actions/github-script@v6
         with:
+          github-token: ${{ secrets.WORKFLOW_ACTION_TOKEN }}
           script: |
             for (const issue_id of ${{ steps.pr-commits.outputs.issue_id_list }}) {
               const { data: labels } = await github.rest.issues.listLabelsOnIssue({
@@ -77,6 +81,7 @@ jobs:
       - name: Close Issue ${{ matrix.issue_id }}
         uses: peter-evans/close-issue@v3
         with:
+          token: ${{ secrets.WORKFLOW_ACTION_TOKEN }}
           issue-number: ${{ matrix.issue_id }}
           comment: Auto close issue after pr merged \#${{ github.event.number }}
 
